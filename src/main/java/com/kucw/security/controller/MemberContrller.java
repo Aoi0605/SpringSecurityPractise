@@ -4,6 +4,7 @@ import com.kucw.security.dao.MemberDao;
 import com.kucw.security.model.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,9 +15,16 @@ public class MemberContrller {
     @Autowired
     private MemberDao memberDao;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/register")
     public String register(@RequestBody Member member) {
         //省略參數檢查，如 email 是否有被註冊
+
+        //hash密碼加密
+        String hashedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(hashedPassword);
 
         Integer memberId = memberDao.createMember(member);
         return "註冊成功";
