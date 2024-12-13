@@ -36,7 +36,15 @@ public class MySecurityConfig {
                         //使註冊帳號可以讓所有人使用
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/userLogin").authenticated()
-                        .anyRequest().authenticated()
+
+                        //Movie API 權限控制
+                        .requestMatchers("/getMovies").hasAnyRole("NORMAL_MEMBER", "MOVIE_MANAGER", "ADMIN")
+                        .requestMatchers("/watchFreeMovie").hasAnyRole("NORMAL_MEMBER", "ADMIN")
+                        .requestMatchers("/watchVipMovie").hasAnyRole("VIP_MEMBER", "ADMIN")
+                        .requestMatchers("/uploadMovie").hasAnyRole("MOVIE_MANAGER", "ADMIN")
+                        .requestMatchers("/deleteMovie").hasAnyRole("MOVIE_MANAGER", "ADMIN")
+
+                        .anyRequest().denyAll()
                 )
 
                 .build();
