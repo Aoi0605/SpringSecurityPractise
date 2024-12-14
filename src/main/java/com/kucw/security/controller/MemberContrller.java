@@ -1,7 +1,9 @@
 package com.kucw.security.controller;
 
 import com.kucw.security.dao.MemberDao;
+import com.kucw.security.dao.RoleDao;
 import com.kucw.security.model.Member;
+import com.kucw.security.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +23,9 @@ public class MemberContrller {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RoleDao roleDao;
+
     @PostMapping("/register")
     public String register(@RequestBody Member member) {
         //省略參數檢查，如 email 是否有被註冊
@@ -29,7 +34,15 @@ public class MemberContrller {
         String hashedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(hashedPassword);
 
+        //資料庫中插入 member 數據
         Integer memberId = memberDao.createMember(member);
+
+        //設定注射預設的 Role
+        //因為測試環境不同，因此須從資料庫將 ROLE_NORMAL_MEMBER 取出，以確認所取得 role 符合預期
+        Role normalRole = roleDao.getRoleByName("ROLE_NORMAL_MEMBER");
+        memberDao.addRoleForMemberId(memberId, normalRole);
+
+
         return "註冊成功";
     }
 

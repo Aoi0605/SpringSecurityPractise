@@ -11,12 +11,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Repository
 public class MemberDaoImpl implements MemberDao {
 
     @Autowired
@@ -78,5 +79,18 @@ public class MemberDaoImpl implements MemberDao {
         List<Role> roleList = namedParameterJdbcTemplate.query(sql, map, roleRowMapper);
 
         return roleList;
+    }
+
+    //為新註冊帳號新增預設 role
+    @Override
+    public void addRoleForMemberId(Integer memberId, Role role) {
+        String sql = "INSERT INTO member_has_role(member_id, role_id)" +
+                "VALUES (:memberId, :roleId)";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberId", memberId);
+        map.put("roleId", role.getRoleId());
+
+        namedParameterJdbcTemplate.update(sql, map);
     }
 }
