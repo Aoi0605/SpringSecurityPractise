@@ -17,4 +17,7 @@ public interface MemberDao {
 
     //新增註冊帳號的預設權限
     void addRoleForMemberId(Integer memberId, Role role);
+
+    //移除權限
+    void removeRoleFromMemberId(Integer memberId, Role role);
 }

@@ -44,6 +44,9 @@ public class MySecurityConfig {
                         .requestMatchers("/uploadMovie").hasAnyRole("MOVIE_MANAGER", "ADMIN")
                         .requestMatchers("/deleteMovie").hasAnyRole("MOVIE_MANAGER", "ADMIN")
 
+                        //訂閱和取消功能
+                        .requestMatchers("/subscribe", "/unsubscribe").hasAnyRole("NORMAL_MEMBER", "ADMIN")
+
                         .anyRequest().denyAll()
                 )
 
